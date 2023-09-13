@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps</title>
+    <!-- Agrega los enlaces a las hojas de estilo y scripts de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="map" data-lat="{{ lat }}" data-long="{{ long }}" data-cadena="{{ cadena }}" zoom="{{ zoom }}" altura="{{ altura }}" ancho="{{ ancho }}"></div>
+    
+    <script>
+        // Obtiene las coordenadas de los atributos data en el elemento 'map'
+        var mapElement = document.getElementById('map');
+        var lat = parseFloat(mapElement.getAttribute('data-lat'));
+        var long = parseFloat(mapElement.getAttribute('data-long'));
+        var cadena = mapElement.getAttribute('data-cadena');
+        var zoom = parseInt(mapElement.getAttribute('zoom'));
+
+        // Obtén la altura como parámetro de la URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var alturaParam = mapElement.getAttribute('altura');
+        var anchoParam = mapElement.getAttribute('ancho');
+        var altura = alturaParam ? parseInt(alturaParam) : 500; // Altura predeterminada
+        var ancho = anchoParam ? parseInt(anchoParam) : 500; // Altura predeterminada
+
+        // Establece la altura del mapa
+        mapElement.style.height = altura + 'px';
+        mapElement.style.width = ancho + 'px';
+
+        // Crea un mapa en el elemento con el ID 'map'
+        var map = L.map('map').setView([lat, long], 13);
+
+        // Agrega una capa de mosaico de OpenStreetMap al mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: zoom,
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Crea un marcador en las coordenadas especificadas y agrega un popup con el nombre
+        var marker = L.marker([lat, long]).addTo(map)
+            .bindPopup(cadena).openPopup();
+    </script>
+</body>
+</html>
